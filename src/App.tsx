@@ -1,12 +1,12 @@
 import { Suspense, useRef } from "react";
 import {Canvas, useFrame, useLoader} from "@react-three/fiber";
-import { Stats, OrbitControls } from "@react-three/drei";
+import {Stats, OrbitControls, useTexture} from "@react-three/drei";
 import { TextureLoader } from 'three/src/loaders/TextureLoader';
-import * as three from "three";
+import * as THREE from "three";
 import "./styles.css";
 
 const Cube = () => {
-    const cube = useRef<three.Mesh>(null);
+    const cube = useRef<THREE.Mesh>(null);
     const textureEarth = useLoader(TextureLoader, '2k_earth_daymap.jpg')
 
 
@@ -17,7 +17,7 @@ const Cube = () => {
 
     return (
         <mesh ref={cube}>
-            <sphereBufferGeometry args={[1, 15, 15]} />
+            <sphereBufferGeometry args={[1, 32, 32]} />
             <meshStandardMaterial color="#0391BA" map={textureEarth}/>
         </mesh>
     );
@@ -36,6 +36,8 @@ const Scene = () => {
 };
 
 const App = () => {
+    const backgroundStars = useLoader(TextureLoader, 'stars.jpg');
+    backgroundStars.encoding = THREE.sRGBEncoding;
     return (
         <div
             style={{
@@ -49,8 +51,8 @@ const App = () => {
                     far: 1000,
                     zoom: 1,
                 }}
-                onCreated={({ gl }) => {
-                    gl.setClearColor("#252934");
+                onCreated={({ gl, scene }) => {
+                    scene.background = backgroundStars;
                 }}
             >
                 <Stats />
