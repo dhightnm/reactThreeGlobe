@@ -1,23 +1,23 @@
-import * as THREE from 'three';
-import { createRoot } from 'react-dom/client';
-import React, {Suspense, useRef } from 'react';
+import { Suspense, useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Stats, OrbitControls } from "@react-three/drei";
-import { Canvas, useFrame, ThreeElements } from '@react-three/fiber';
-import './App.css';
+import * as three from "three";
+import "./styles.css";
 
-function Cube1(props: ThreeElements['mesh']) {
-    const cube = useRef<THREE.Mesh>();
+const Cube = () => {
+    const cube = useRef<three.Mesh>(null);
 
     useFrame(() => {
-        cube.current!.rotation.x += 0.01;
-        cube.current!.rotation.y += 0.01;
+        cube.current!.rotation.x += 0.001;
+        cube.current!.rotation.y += 0.001;
     });
-  return (
-      <mesh>
-          <boxBufferGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial color="#0391BA" />
-      </mesh>
-  );
+
+    return (
+        <mesh ref={cube}>
+            <sphereBufferGeometry args={[1, 15, 15]} />
+            <meshStandardMaterial color="#0391BA" />
+        </mesh>
+    );
 };
 
 const Scene = () => {
@@ -26,14 +26,19 @@ const Scene = () => {
             <gridHelper />
             <axesHelper />
             <pointLight intensity={1.0} position={[5, 3, 5]} />
-            <Cube1 />
+            <Cube />
         </>
     );
 };
 
-function App() {
+const App = () => {
     return (
-        <div>
+        <div
+            style={{
+                height: "100vh",
+                width: "100vw",
+            }}
+        >
             <Canvas
                 camera={{
                     near: 0.1,
