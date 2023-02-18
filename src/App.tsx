@@ -1,29 +1,57 @@
 import * as THREE from 'three';
 import { createRoot } from 'react-dom/client';
-import React from 'react';
-import logo from './logo.svg';
+import React, {Suspense, useRef } from 'react';
+import { Stats, OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame, ThreeElements } from '@react-three/fiber';
 import './App.css';
 
-function App() {
+function Cube1(props: ThreeElements['mesh']) {
+    const cube = useRef<THREE.Mesh>();
+
+    useFrame(() => {
+        cube.current!.rotation.x += 0.01;
+        cube.current!.rotation.y += 0.01;
+    });
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <mesh>
+          <boxBufferGeometry args={[1, 1, 1]} />
+          <meshStandardMaterial color="#0391BA" />
+      </mesh>
   );
-}
+};
+
+const Scene = () => {
+    return (
+        <>
+            <gridHelper />
+            <axesHelper />
+            <pointLight intensity={1.0} position={[5, 3, 5]} />
+            <Cube1 />
+        </>
+    );
+};
+
+function App() {
+    return (
+        <div>
+            <Canvas
+                camera={{
+                    near: 0.1,
+                    far: 1000,
+                    zoom: 1,
+                }}
+                onCreated={({ gl }) => {
+                    gl.setClearColor("#252934");
+                }}
+            >
+                <Stats />
+                <OrbitControls />
+                <Suspense fallback={null}>
+                    <Scene />
+                </Suspense>
+            </Canvas>
+        </div>
+    );
+};
 
 export default App;
