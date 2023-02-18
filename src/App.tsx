@@ -1,5 +1,8 @@
+import * as THREE from 'three';
+import { createRoot } from 'react-dom/client';
 import React from 'react';
 import logo from './logo.svg';
+import { Canvas, useFrame, ThreeElements } from '@react-three/fiber';
 import './App.css';
 
 function App() {
