@@ -1,6 +1,6 @@
 import { Suspense, useRef } from "react";
 import {Canvas, useFrame, useLoader} from "@react-three/fiber";
-import {Stats, OrbitControls, useTexture} from "@react-three/drei";
+import {Stats, OrbitControls, useTexture, Stars} from "@react-three/drei";
 import { TextureLoader } from 'three/src/loaders/TextureLoader';
 import * as THREE from "three";
 import "./styles.css";
@@ -18,19 +18,54 @@ const Cube = () => {
     return (
         <mesh ref={cube}>
             <sphereBufferGeometry args={[1, 32, 32]} />
-            <meshStandardMaterial color="#0391BA" map={textureEarth}/>
+            <meshStandardMaterial map={textureEarth}/>
         </mesh>
     );
 };
 
-const Scene = () => {
+// @ts-ignore
+function Sphere() {
+    const sphere = useRef<THREE.Mesh>(null);
+    let posx =0
+    let posy =0
+    let posz =0
+    // sphere.current!.position.x += posx;
+    // sphere.current!.position.y += posy;
+    // sphere.current!.position.z += posz;
 
+    useFrame((state) => {
+        // @ts-ignore
+        sphere.current.position.set(
+            Math.sin(state.clock.getElapsedTime() / 1.5) / 2 ,
+            0,
+            (Math.cos(state.clock.getElapsedTime() / 1.5) / .5)
+        );
+        // @ts-ignore
+        sphere.current.rotation.set(
+            Math.sin(state.clock.getElapsedTime() / 1.5) / 2 * 5,
+            0,
+            0
+        );
+    });
+
+
+
+    return (
+        <mesh ref={sphere}>
+            <sphereGeometry args={[0.2, 30, 30]} />
+            <meshStandardMaterial color='hotpink' />
+        </mesh>
+    );
+}
+
+const Scene = () => {
     return (
         <>
             <gridHelper />
             <axesHelper />
             <pointLight intensity={1.0} position={[5, 3, 5]} />
-            <Cube />
+            <Sphere />
+            {/*<Cube />*/}
         </>
     );
 };
@@ -58,6 +93,7 @@ const App = () => {
                 <Stats />
                 <OrbitControls />
                 <Suspense fallback={null}>
+                    <Stars depth={200}/>
                     <Scene />
                 </Suspense>
             </Canvas>
