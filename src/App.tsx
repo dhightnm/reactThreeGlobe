@@ -1,5 +1,5 @@
 import { Suspense, useRef } from "react";
-import {Canvas, useFrame, useLoader} from "@react-three/fiber";
+import {Canvas, ThreeElements, useFrame, useLoader} from "@react-three/fiber";
 import {Stats, OrbitControls, useTexture, Stars} from "@react-three/drei";
 import { TextureLoader } from 'three/src/loaders/TextureLoader';
 import * as THREE from "three";
@@ -12,7 +12,7 @@ const Cube = () => {
 
     useFrame(() => {
         // cube.current!.rotation.x += 0.007;
-        cube.current!.rotation.y += 0.001;
+        cube.current!.rotation.y += 0.01;
     });
 
     return (
@@ -24,8 +24,9 @@ const Cube = () => {
 };
 
 // @ts-ignore
-function Sphere() {
-    const sphere = useRef<THREE.Mesh>(null);
+function Sphere(props: ThreeElements['mesh']) {
+    const sphere = useRef<THREE.Mesh>(null!);
+    const moonTexture = useLoader ( TextureLoader, 'moon.jpeg' )
     let posx =0
     let posy =0
     let posz =0
@@ -36,24 +37,18 @@ function Sphere() {
     useFrame((state) => {
         // @ts-ignore
         sphere.current.position.set(
-            Math.sin(state.clock.getElapsedTime() / 1.5) / 2 ,
+            Math.sin(state.clock.getElapsedTime() / 1.5) / .2,
             0,
-            (Math.cos(state.clock.getElapsedTime() / 1.5) / .5)
-        );
-        // @ts-ignore
-        sphere.current.rotation.set(
-            Math.sin(state.clock.getElapsedTime() / 1.5) / 2 * 5,
-            0,
-            0
+            (Math.cos(state.clock.getElapsedTime() / 1.5) / .2)
         );
     });
 
 
 
     return (
-        <mesh ref={sphere}>
+        <mesh ref={sphere} {...props}>
             <sphereGeometry args={[0.2, 30, 30]} />
-            <meshStandardMaterial color='hotpink' />
+            <meshStandardMaterial map={moonTexture} />
         </mesh>
     );
 }
@@ -65,7 +60,7 @@ const Scene = () => {
             <axesHelper />
             <pointLight intensity={1.0} position={[5, 3, 5]} />
             <Sphere />
-            {/*<Cube />*/}
+            <Cube />
         </>
     );
 };
